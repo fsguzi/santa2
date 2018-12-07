@@ -1,3 +1,9 @@
+import pandas as pd
+import numpy as np
+import time
+
+import common 
+
 class two_reverse:
     
     @classmethod
@@ -28,8 +34,9 @@ class two_reverse:
             did = 0
 
             reverse_dist, old_dist, roller = cls.calc_basis(start_at)
-
-            for left in range(start_at, run_through):
+            left = 1
+            #for left in range(start_at, run_through):
+            while left>=1 and left<run_through:
                 node_before_a, node_a = solution[left-1:left+1]
                 
                 middle, reverse_dist = cls.calc_middle(reverse_dist, left)
@@ -46,10 +53,12 @@ class two_reverse:
                     print('a: %s | saving: %.3f | cumsave: %.3f'%(left, saving, did))
 
                     #reset infos
-                    reverse_dist, old_dist, roller = cls.calc_basis(left+1)
-                    
+                    #reverse_dist, old_dist, roller = cls.calc_basis(left+1)
+                    reverse_dist, old_dist, roller = cls.calc_basis(left)
+                    left-=1
+                left += 1
             print('iter %s done, total swap %s, saves %.3f, time %.1f'%(i,len(best),did,time.time()-iter_start))
-            print(score(nodes,solution,prime).sum())
+            print(common.score(nodes,solution,prime).sum())
             print('####################################')
             i+=1
             if len(best) == 0:
@@ -62,14 +71,14 @@ class two_reverse:
         r_solution = cls.solution[left:-1][::-1]
         reverse_dist = []
         for offset in range(10):
-            reverse_dist.append(np.cumsum(score(cls.nodes,r_solution,cls.prime,offset)[::-1])[::-1])
+            reverse_dist.append(np.cumsum(common.score(cls.nodes,r_solution,cls.prime,offset)[::-1])[::-1])
         reverse_dist = np.array(reverse_dist)
         return reverse_dist
     
     @classmethod
     def calc_old_dist(cls, from_node):
         offset = from_node%10
-        return np.cumsum(score(cls.nodes, cls.solution[from_node:],cls.prime, offset=offset))
+        return np.cumsum(common.score(cls.nodes, cls.solution[from_node:],cls.prime, offset=offset))
     
     @classmethod
     def calc_middle(cls, reverse_dist, left):
@@ -92,11 +101,11 @@ class two_reverse:
         if node_before_a not in cls.prime_set and offset == 0:
             to_d *= 1.1
 
-        roller = distance(cls.nodes[node_a], cls.solution_nodes[left+2:])
+        roller = common.distance(cls.nodes[node_a], cls.solution_nodes[left+2:])
         if node_a in cls.prime_set:
             return to_d, roller, roller  
         else:
-            start_leg = (10-left+2)%10
+            start_leg = (10-left-2)%10
             from_a = roller.copy()
             from_a[start_leg::10] *= 1.1
             return to_d, from_a, roller
@@ -115,7 +124,7 @@ class two_reverse:
     def calc_basis(cls, start_at):
         reverse_dist = cls.calc_reverse(start_at)
         old_dist = cls.calc_old_dist(from_node=start_at-1)
-        roller = distance(cls.nodes[cls.solution[start_at-1]], cls.solution_nodes[start_at-1+2:])
+        roller = common.distance(cls.nodes[cls.solution[start_at-1]], cls.solution_nodes[start_at-1+2:])
 
         return reverse_dist, old_dist, roller
     

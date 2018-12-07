@@ -2,7 +2,8 @@ import pandas as pd
 import numpy as np
 from sympy import sieve
 import time
-from solver import *
+
+import solver 
 
 def score(nodes,solution,prime,offset=0,raw=False):
     s = nodes[solution[:-1]]
@@ -17,8 +18,8 @@ def score(nodes,solution,prime,offset=0,raw=False):
     out += out*isextra
     return out
 
-def score_(*args):
-    return score(*args).sum()
+def score_(**args):
+    return score(**args).sum()
 
 def distance(coor1,coor2):
     return np.sqrt(((coor1-coor2)**2).sum(axis=-1))
@@ -36,5 +37,8 @@ class problem:
         self.prime_set = set(prime_)
     
     def solve(self, *args, **kwargs,):
-        solution = two_reverse.solve(self.nodes, self.base, self.prime, self.prime_set, *args, **kwargs)
-        print(score_(self.nodes,solution,self.prime))
+        self.solution = solver.two_reverse.solve(self.nodes, self.base, self.prime, self.prime_set, *args, **kwargs)
+        print(self.score(self.solution))
+        
+    def score(self, solution, **kwargs):
+        return score_(nodes = self.nodes, solution=solution, prime=self.prime,**kwargs)
