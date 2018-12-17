@@ -4,6 +4,7 @@ import time
 
 import common 
 
+
 class two_reverse:
     
     @classmethod
@@ -99,7 +100,7 @@ class two_reverse:
         to_d = roller[:-1].copy()
         offset = left%10
         if node_before_a not in cls.prime_set and offset == 0:
-            to_d *= 1.1
+            to_d *= common.penalty
 
         roller = common.distance(cls.nodes[node_a], cls.solution_nodes[left+2:])
         if node_a in cls.prime_set:
@@ -107,7 +108,7 @@ class two_reverse:
         else:
             start_leg = (10-left-2)%10
             from_a = roller.copy()
-            from_a[start_leg::10] *= 1.1
+            from_a[start_leg::10] *= common.penalty
             return to_d, from_a, roller
     
     @classmethod

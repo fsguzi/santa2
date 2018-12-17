@@ -5,6 +5,8 @@ import time
 
 import solver 
 
+penalty = 1.1
+
 def score(nodes,solution,prime,offset=0,raw=False):
     s = nodes[solution[:-1]]
     e = nodes[solution[1:]]
@@ -14,7 +16,7 @@ def score(nodes,solution,prime,offset=0,raw=False):
         return out
     isten = (np.arange(n)+1+offset)%10==0
     notprime = ~np.isin(solution[:-1],prime)
-    isextra = (isten&notprime)*0.1
+    isextra = (isten&notprime)*(penalty-1)
     out += out*isextra
     return out
 
